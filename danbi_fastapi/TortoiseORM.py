@@ -46,11 +46,11 @@ class TortoiseORM(plugable.IPlugin):
 
     def _raw_connect(self, app):
         psql = ConnMngPsql(
-            user="rsnet",
-            password="rsnet",
-            host="postgresql-hl.postgresql",
-            port="5432",
-            database="rsnet"
+            user=TortoiseORM.settings.DB_USER,
+            password=TortoiseORM.settings.DB_PASS,
+            host=TortoiseORM.settings.DB_HOST,
+            port=TortoiseORM.settings.DB_PORT,
+            database=TortoiseORM.settings.DB_NAME
         ).connect(minconn=1, maxconn=2)
         mapper = Jinja2Mapper(
             TortoiseORM.settings.JINJA2MAPPER_CONFS,
