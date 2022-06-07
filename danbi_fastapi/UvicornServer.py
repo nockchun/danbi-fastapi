@@ -34,7 +34,7 @@ class UvicornServer(plugable.IPlugin):
              self._setOrigins(kwargs["app"])
 
         self._startUvicorn()
-    
+
     def unplug(self, **kwargs) -> bool:
         print(f"{self.getName()} unpluged. {kwargs}")
         

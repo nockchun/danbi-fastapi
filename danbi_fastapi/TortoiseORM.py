@@ -1,3 +1,4 @@
+from importlib.resources import Package
 from typing import Any, Union
 
 from tortoise import Tortoise
@@ -22,6 +23,7 @@ class Settings(BaseSettings):
     ORM_MODELS: list                    = []
 
     JINJA2MAPPER: bool                  = False
+    JINJA2MAPPER_CONF_PACKAGE: str      = None
     JINJA2MAPPER_CONFS: list            = []
     JINJA2MAPPER_NAMESPACE: str         = None
     JINJA2MAPPER_TAG: Union[str, float] = None
@@ -55,7 +57,8 @@ class TortoiseORM(plugable.IPlugin):
         mapper = Jinja2Mapper(
             TortoiseORM.settings.JINJA2MAPPER_CONFS,
             TortoiseORM.settings.JINJA2MAPPER_NAMESPACE,
-            TortoiseORM.settings.JINJA2MAPPER_TAG
+            TortoiseORM.settings.JINJA2MAPPER_TAG,
+            TortoiseORM.settings.JINJA2MAPPER_CONF_PACKAGE
         )
         app.tortoise = DBPsql(psql, mapper)
 
