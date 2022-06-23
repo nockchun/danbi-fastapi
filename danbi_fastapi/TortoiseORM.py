@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     DB_USER: str                        = ""
     DB_PASS: str                        = ""
     DB_PORT: int                        = 5432
+    DB_POOL_MIN: int                    = 5
     DB_POOL_MAX: int                    = 10
 
     ORM_MODELS: list                    = []
@@ -53,7 +54,7 @@ class TortoiseORM(plugable.IPlugin):
             host=TortoiseORM.settings.DB_HOST,
             port=TortoiseORM.settings.DB_PORT,
             database=TortoiseORM.settings.DB_NAME
-        ).connect(minconn=1, maxconn=2)
+        ).connect(minconn=TortoiseORM.settings.DB_POOL_MIN, maxconn=TortoiseORM.settings.DB_POOL_MAX)
         mapper = Jinja2Mapper(
             TortoiseORM.settings.JINJA2MAPPER_CONFS,
             TortoiseORM.settings.JINJA2MAPPER_NAMESPACE,
@@ -78,6 +79,7 @@ class ConnMngTortoise(IConnectionManager):
                             "password": TortoiseORM.settings.DB_PASS,
                             "port": TortoiseORM.settings.DB_PORT
                         },
+                        "minsize": TortoiseORM.settings.DB_POOL_MIN,
                         "maxsize": TortoiseORM.settings.DB_POOL_MAX
                     }
                 },
