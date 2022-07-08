@@ -100,6 +100,13 @@ class ConnMngTortoise(IConnectionManager):
         except Exception:
             raise
     
+    def isConnect(self) -> bool:
+        try:
+            self.getConnection()
+            return True
+        except Exception:
+            return False
+
     def close(self, **kwargs) -> None:
         ...
     
@@ -111,3 +118,4 @@ class ConnMngTortoise(IConnectionManager):
     
     def releaseConnection(self, conn) -> None:
         ...
+
