@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     UVICORN_DEBUG          : bool = True
     UVICORN_SERVER_HEADER  : bool = False
     UVICORN_WORKS          : int  = 5
+    UVICORN_KEY            : str  = None
+    UVICORN_CERT           : str  = None
 
     ORIGIN_LIST            : list = []
     ORIGIN_CREDENTIALS     : bool = True
@@ -55,5 +57,7 @@ class UvicornServer(plugable.IPlugin):
             reload        = UvicornServer.settings.UVICORN_RELOAD,
             debug         = UvicornServer.settings.UVICORN_DEBUG,
             server_header = UvicornServer.settings.UVICORN_SERVER_HEADER,
-            workers       = UvicornServer.settings.UVICORN_WORKS
+            workers       = UvicornServer.settings.UVICORN_WORKS,
+            ssl_keyfile   = UvicornServer.settings.UVICORN_KEY,
+            ssl_certfile  = UvicornServer.settings.UVICORN_CERT
         )

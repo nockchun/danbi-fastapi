@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     DB_POOL_MAX: int                    = 10
 
     ORM_MODELS: list                    = []
+    ORM_GENERATE_SCHEMAS                = True
 
     JINJA2MAPPER: bool                  = False
     JINJA2MAPPER_CONF_PACKAGE: str      = None
@@ -84,16 +85,17 @@ class ConnMngTortoise(IConnectionManager):
                     }
                 },
                 "apps": {
-                    "stofacker": {
+                    "models": {
                         "models": TortoiseORM.settings.ORM_MODELS,
                         "default_connection": "danbi"
                     }
                 }
             }
+
             register_tortoise(
                 app,
                 config=config,
-                generate_schemas=True,
+                generate_schemas=TortoiseORM.settings.ORM_GENERATE_SCHEMAS,
                 add_exception_handlers=True
             )
             return self.instance
@@ -101,11 +103,7 @@ class ConnMngTortoise(IConnectionManager):
             raise
     
     def isConnect(self) -> bool:
-        try:
-            self.getConnection()
-            return True
-        except Exception:
-            return False
+        ...
 
     def close(self, **kwargs) -> None:
         ...
