@@ -1,5 +1,4 @@
 from typing import Any
-from enum import Enum, auto
 
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
@@ -9,22 +8,16 @@ from danbi import plugable
 
 class Settings(BaseSettings):
     NAME                   : str  = "danbi_fastapi.UvicornServer.UvicornServer"
-    OPTION_ORIGIN          : bool = True
 
-    UVICORN_APP_NAME       : str  = "server:app"
-    UVICORN_HOST           : str  = "0.0.0.0"
-    UVICORN_PORT           : int  = 8000
-    UVICORN_RELOAD         : bool = True
-    UVICORN_DEBUG          : bool = True
-    UVICORN_SERVER_HEADER  : bool = False
-    UVICORN_WORKS          : int  = 5
-    UVICORN_KEY            : str  = None
-    UVICORN_CERT           : str  = None
-
-    ORIGIN_LIST            : list = []
-    ORIGIN_CREDENTIALS     : bool = True
-    ORIGIN_METHODS         : list = ["*"]
-    ORIGIN_HEADERS         : list = ["*"]
+    APP_NAME       : str  = "server:app"
+    HOST           : str  = "0.0.0.0"
+    PORT           : int  = 8000
+    RELOAD         : bool = True
+    DEBUG          : bool = True
+    SERVER_HEADER  : bool = False
+    WORKS          : int  = 5
+    KEY            : str  = None
+    CERT           : str  = None
 
 class UvicornServer(plugable.IPlugin):
     settings = Settings()
@@ -32,32 +25,20 @@ class UvicornServer(plugable.IPlugin):
     def plug(self, **kwargs) -> bool:
         assert "app" in kwargs, f"set the fastapi app when create the PluginManager.\n{' '*16}ex) PluginManager(app=<your fastapi app instance>)"
 
-        if (UvicornServer.settings.OPTION_ORIGIN):
-             self._setOrigins(kwargs["app"])
-
         self._startUvicorn()
 
     def unplug(self, **kwargs) -> bool:
         print(f"{self.getName()} unpluged. {kwargs}")
         
-    def _setOrigins(self, app):
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origins     = [str(origin) for origin in UvicornServer.settings.ORIGIN_LIST],
-            allow_credentials = UvicornServer.settings.ORIGIN_CREDENTIALS,
-            allow_methods     = UvicornServer.settings.ORIGIN_METHODS,
-            allow_headers     = UvicornServer.settings.ORIGIN_HEADERS
-        )
-    
     def _startUvicorn(self):
         uvicorn.run(
-            app           = UvicornServer.settings.UVICORN_APP_NAME,
-            host          = UvicornServer.settings.UVICORN_HOST,
-            port          = UvicornServer.settings.UVICORN_PORT,
-            reload        = UvicornServer.settings.UVICORN_RELOAD,
-            debug         = UvicornServer.settings.UVICORN_DEBUG,
-            server_header = UvicornServer.settings.UVICORN_SERVER_HEADER,
-            workers       = UvicornServer.settings.UVICORN_WORKS,
-            ssl_keyfile   = UvicornServer.settings.UVICORN_KEY,
-            ssl_certfile  = UvicornServer.settings.UVICORN_CERT
+            app           = UvicornServer.settings.APP_NAME,
+            host          = UvicornServer.settings.HOST,
+            port          = UvicornServer.settings.PORT,
+            reload        = UvicornServer.settings.RELOAD,
+            debug         = UvicornServer.settings.DEBUG,
+            server_header = UvicornServer.settings.SERVER_HEADER,
+            workers       = UvicornServer.settings.WORKS,
+            ssl_keyfile   = UvicornServer.settings.KEY,
+            ssl_certfile  = UvicornServer.settings.CERT
         )
