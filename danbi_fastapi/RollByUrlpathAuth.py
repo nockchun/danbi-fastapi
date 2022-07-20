@@ -6,8 +6,11 @@ from fastapi import Request
 from numpy import isin
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 from pydantic import BaseSettings
+
+from fastapi.encoders import jsonable_encoder
+
 
 from danbi import plugable
 
@@ -48,11 +51,11 @@ class UrlpathMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
         authentication, authorization = await self._rollCheck(request.url.path, **request.session)
         if all([authentication, authorization]):
-            resp = await call_next(request)
+            return await call_next(request)
         else:
             resp = self._callback(request, authentication, authorization)
-
-        return resp
+            json_code = jsonable_encoder(resp)
+            return JSONResponse(content=json_code)
 
 class RollByUrlpathAuth(plugable.IPlugin):
     settings = Settings()
