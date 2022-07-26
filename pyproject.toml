@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "danbi-fastapi"
-version = "0.1.27"
+version = "0.1.28"
 description = "danbi plugin for fastapi"
 authors = ["nockchun <nockchun@gmail.com>"]
 license = "Apache-2.0"
@@ -22,7 +22,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.7"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
