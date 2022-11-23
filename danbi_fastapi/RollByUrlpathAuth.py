@@ -54,8 +54,9 @@ class UrlpathMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         else:
             resp = self._callback(request, authentication, authorization)
-            json_code = jsonable_encoder(resp)
-            return JSONResponse(content=json_code)
+            # json_code = jsonable_encoder(resp)
+            # return JSONResponse(content=json_code)
+            return resp
 
 class RollByUrlpathAuth(plugable.IPlugin):
     settings = Settings()

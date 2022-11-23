@@ -3,4 +3,4 @@ from .TortoiseORM import TortoiseORM
 from .RollByUrlpathAuth import RollByUrlpathAuth
 from .Middleware import Middleware
 
-__version__ = '0.1.28'
+__version__ = '0.1.29'
