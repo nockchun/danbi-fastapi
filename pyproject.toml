@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "danbi-fastapi"
-version = "0.1.29"
-description = "danbi plugin for fastapi"
+version = "0.1.31"
+description = "danbi plugin f`or fastapi"
 authors = ["nockchun <nockchun@gmail.com>"]
 license = "Apache-2.0"
 readme = "README.md"

@@ -2,27 +2,15 @@ from gc import callbacks
 from typing import Callable, Dict
 from async_lru import alru_cache
 
+import danbi as bi
 from fastapi import Request
 from numpy import isin
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.responses import Response, JSONResponse
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 from fastapi.encoders import jsonable_encoder
-
-
-from danbi import plugable
-
-class Settings(BaseSettings):
-    NAME                   : str  = "danbi_fastapi.RollByUrlpathAuth.RollByUrlpathAuth"
-
-    SESSION_SECRET_KEY  : str = "secret"
-    SESSION_AUTH_KEY    : str = "is_login"
-    SESSION_COOKIE_NAME : str = "SID"
-    SESSION_MAX_AGE     : int = 60 * 5
-    ROLE_BY_URLPATH     : Dict = {}
-    AUTH_FAIL_CALLBACK  : Callable = None
 
 class UrlpathMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, auth_key: str, rule: dict, callback: Callable):
@@ -58,8 +46,15 @@ class UrlpathMiddleware(BaseHTTPMiddleware):
             # return JSONResponse(content=json_code)
             return resp
 
-class RollByUrlpathAuth(plugable.IPlugin):
-    settings = Settings()
+class RollByUrlpathAuth(bi.plugable.IPlugin):
+    ID                  : str  = "danbi_fastapi.RollByUrlpathAuth.RollByUrlpathAuth"
+    
+    SESSION_SECRET_KEY  : str = "secret"
+    SESSION_AUTH_KEY    : str = "is_login"
+    SESSION_COOKIE_NAME : str = "SID"
+    SESSION_MAX_AGE     : int = 60 * 5
+    ROLE_BY_URLPATH     : Dict = {}
+    AUTH_FAIL_CALLBACK  : Callable = None
 
     def plug(self, **kwargs) -> bool:
         assert "app" in kwargs, f"set the fastapi app when create the PluginManager.\n{' '*16}ex) PluginManager(app=<your fastapi app instance>)"
@@ -67,19 +62,16 @@ class RollByUrlpathAuth(plugable.IPlugin):
         app = kwargs["app"]
         app.add_middleware(
             UrlpathMiddleware,
-            auth_key = RollByUrlpathAuth.settings.SESSION_AUTH_KEY,
-            rule = RollByUrlpathAuth.settings.ROLE_BY_URLPATH,
-            callback = RollByUrlpathAuth.settings.AUTH_FAIL_CALLBACK
+            auth_key = RollByUrlpathAuth.SESSION_AUTH_KEY,
+            rule = RollByUrlpathAuth.ROLE_BY_URLPATH,
+            callback = RollByUrlpathAuth.AUTH_FAIL_CALLBACK
         )
         app.add_middleware(
             SessionMiddleware,
-            secret_key = RollByUrlpathAuth.settings.SESSION_SECRET_KEY,
-            session_cookie = RollByUrlpathAuth.settings.SESSION_COOKIE_NAME,
-            max_age = RollByUrlpathAuth.settings.SESSION_MAX_AGE
+            secret_key = RollByUrlpathAuth.SESSION_SECRET_KEY,
+            session_cookie = RollByUrlpathAuth.SESSION_COOKIE_NAME,
+            max_age = RollByUrlpathAuth.SESSION_MAX_AGE
         )
 
     def unplug(self, **kwargs) -> bool:
         print(f"{self.getName()} unpluged. {kwargs}")
-    
-    def __repr__(self):
-        return f"{self.__module__}.{self.__class__.__name__}"
